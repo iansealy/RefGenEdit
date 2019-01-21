@@ -1,0 +1,9 @@
+FASTA
+Indels
+perl
+RefGenEdit
+Sealy
+SNPs
+snps
+VCF
+vcf
