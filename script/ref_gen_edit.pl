@@ -101,9 +101,9 @@ the same order.
 
 =head1 EXAMPLES
 
-perl ref_gen_edit.pl --genome genome.fa --vcf snps.vcf
+ref_gen_edit.pl --genome genome.fa --vcf snps.vcf
 
-perl ref_gen_edit.pl --genome genome.fa --vcf snps.vcf --sample Sample1 Sample2 --method other --filter --seed 1
+ref_gen_edit.pl --genome genome.fa --vcf snps.vcf --sample Sample1 Sample2 --method other --filter --seed 1
 
 =head1 OPTIONS
 
@@ -111,11 +111,13 @@ perl ref_gen_edit.pl --genome genome.fa --vcf snps.vcf --sample Sample1 Sample2 
 
 =item B<--genome FILE>
 
-FASTA file containing reference genome.
+FASTA file containing reference genome. The file can be uncompressed or
+compressed with gzip (or bgzip).
 
 =item B<--vcf FILE>
 
-VCF file containing variants for editing genome.
+VCF file containing variants for editing genome. The file can be uncompressed
+or compressed with gzip or bgzip.
 
 =item B<--sample SAMPLE...>
 
