@@ -69,9 +69,9 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install build-essential # Install development tools
 sudo apt-get install cpanminus # Install cpanm, which is used for installing Perl dependencies
-wget https://github.com/iansealy/RefGenEdit/releases/download/v0.1.0/RefGenEdit-0.1.0.tar.gz
-tar zxf RefGenEdit-0.1.0.tar.gz
-cd RefGenEdit-0.1.0
+wget https://github.com/iansealy/RefGenEdit/releases/download/v0.1.1/RefGenEdit-0.1.1.tar.gz
+tar zxf RefGenEdit-0.1.1.tar.gz
+cd RefGenEdit-0.1.1
 perl Makefile.PL
 sudo cpanm --installdeps . # Install Perl dependencies
 make
@@ -93,9 +93,9 @@ Alternatively, if you don't have sudo access and want to install in your home di
 curl -L https://cpanmin.us | perl - App::cpanminus # Install cpanm, which is used for installing Perl dependencies
 ~/perl5/bin/cpanm --local-lib=~/perl5 local::lib # Install local::lib, which allows installing Perl modules in a specific directory
 eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) # Activate local::lib
-wget https://github.com/iansealy/RefGenEdit/releases/download/v0.1.0/RefGenEdit-0.1.0.tar.gz
-tar zxf RefGenEdit-0.1.0.tar.gz
-cd RefGenEdit-0.1.0
+wget https://github.com/iansealy/RefGenEdit/releases/download/v0.1.1/RefGenEdit-0.1.1.tar.gz
+tar zxf RefGenEdit-0.1.1.tar.gz
+cd RefGenEdit-0.1.1
 perl Makefile.PL
 ~/perl5/bin/cpanm --local-lib=~/perl5 --installdeps . # Install Perl dependencies
 make
