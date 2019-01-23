@@ -1,4 +1,6 @@
+bgzip
 FASTA
+gzip
 Indels
 perl
 RefGenEdit
