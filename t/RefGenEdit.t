@@ -9,22 +9,25 @@ use RefGenEdit qw( %METHOD edit_genome get_chr get_variants_by_chr edit_seq );
 
 my @edit_genome_like_data = (
     [
-        't/data/test.fa', 't/data/test.vcf', undef,
+        't/data/test.fa', 't/data/test.vcf', undef, undef,
         ">1 chr1\nTGCTCGCTAGCT\n>2 chr2\nACGATCGATCGACCGA\n",
         'Genome default'
     ],
     [
-        't/data/test.fa', 't/data/test.vcf', 'alt',
+        't/data/test.fa', 't/data/test.vcf', undef, 'alt',
         ">1 chr1\nTGCTCGCTAGCT\n>2 chr2\nACGATCGATCGACCGA\n",
         'Genome ALT'
     ],
     [
-        't/data/test.fa', 't/data/test.vcf', 'other',
+        't/data/test.fa',
+        't/data/test.vcf',
+        undef,
+        'other',
         ">1 chr1\n[CG]GCT[GT]GCTAGCT\n>2 chr2\n[CG]CGATCGATCGA[AG]CGA\n",
         'Genome NOT_REF_ALT'
     ],
     [
-        't/data/test.fa.gz', 't/data/test.vcf.gz', undef,
+        't/data/test.fa.gz', 't/data/test.vcf.gz', undef, undef,
         ">1 chr1\nTGCTCGCTAGCT\n>2 chr2\nACGATCGATCGACCGA\n",
         'Compressed genome & VCF'
     ],
@@ -32,21 +35,41 @@ my @edit_genome_like_data = (
         't/data/long.fa',
         't/data/test.vcf',
         undef,
+        undef,
 ">1 chr1\nTGCTCGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCT\nAGCTAGCTAGCTAGCT\n>2 chr2\nACGATCGATCGACCGA\n",
         '>80 bp chr'
+    ],
+    [
+        't/data/test.fa', 't/data/test.vcf', 'Sample1', undef,
+        ">1 chr1\nTGCTCGCTAGCT\n>2 chr2\nACGATCGATCGACCGA\n",
+        'Genome Sample1'
+    ],
+    [
+        't/data/test.fa', 't/data/test.vcf', 'Sample2', undef,
+        ">1 chr1\nAGCTAGCTAGCT\n>2 chr2\nTCGATCGATCGATCGA\n",
+        'Genome Sample2'
     ],
 );
 
 my @edit_genome_throws_data = (
-    [ undef,            't/data/test.vcf', undef, 'Genome argument missing' ],
-    [ 't/data/test.fa', undef,             undef, 'VCF argument missing' ],
-    [ 't/data/missing.fa', 't/data/test.vcf', undef, 'Genome does not exist' ],
-    [ 't/data/test.fa',     't/data/missing.vcf', undef, 'VCF does not exist' ],
-    [ 't/data/notgz.fa.gz', 't/data/test.vcf',    undef, 'gunzip failed' ],
-    [ 't/data/test.fa', 't/data/notgz.vcf.gz', undef, 'gunzip failed' ],
+    [ undef, 't/data/test.vcf', undef, undef, 'Genome argument missing' ],
+    [ 't/data/test.fa', undef, undef, undef, 'VCF argument missing' ],
+    [
+        't/data/missing.fa', 't/data/test.vcf',
+        undef,               undef,
+        'Genome does not exist'
+    ],
+    [
+        't/data/test.fa', 't/data/missing.vcf',
+        undef,            undef,
+        'VCF does not exist'
+    ],
+    [ 't/data/notgz.fa.gz', 't/data/test.vcf', undef, undef, 'gunzip failed' ],
+    [ 't/data/test.fa', 't/data/notgz.vcf.gz', undef, undef, 'gunzip failed' ],
     [
         't/data/test.fa', 't/data/test.vcf',
-        'unknown',        'Unknown method argument'
+        undef,            'unknown',
+        'Unknown method argument'
     ],
 );
 
@@ -292,30 +315,51 @@ plan tests => ( 2 * scalar @edit_genome_like_data ) +
   scalar @edit_seq_throws_data;
 
 foreach my $datum (@edit_genome_like_data) {
-    my ( $genome, $vcf, $method, $regex, $name ) = @{$datum};
+    my ( $genome, $vcf, $sample, $method, $regex, $name ) = @{$datum};
     my $output;
     open my $fh, q{>}, \$output;
     edit_genome(
-        { genome => $genome, vcf => $vcf, method => $method, fh => $fh } );
+        {
+            genome => $genome,
+            vcf    => $vcf,
+            sample => $sample,
+            method => $method,
+            fh     => $fh
+        }
+    );
     like( $output, qr/\A$regex\z/ms, $name . ' filehandle' );
     close $fh;
 }
 
 foreach my $datum (@edit_genome_like_data) {
-    my ( $genome, $vcf, $method, $regex, $name ) = @{$datum};
+    my ( $genome, $vcf, $sample, $method, $regex, $name ) = @{$datum};
     my $output = capture_stdout {
-        edit_genome( { genome => $genome, vcf => $vcf, method => $method } );
+        edit_genome(
+            {
+                genome => $genome,
+                vcf    => $vcf,
+                sample => $sample,
+                method => $method
+            }
+        );
     };
     like( $output, qr/\A$regex\z/ms, $name . ' STDOUT' );
 }
 
 foreach my $datum (@edit_genome_throws_data) {
-    my ( $genome, $vcf, $method, $regex, $name ) = @{$datum};
+    my ( $genome, $vcf, $sample, $method, $regex, $name ) = @{$datum};
     if ( !defined $name ) {
         $name = $regex;
     }
     throws_ok {
-        edit_genome( { genome => $genome, vcf => $vcf, method => $method } )
+        edit_genome(
+            {
+                genome => $genome,
+                vcf    => $vcf,
+                sample => $sample,
+                method => $method
+            }
+        )
     }
     qr/$regex/ms, $name;
 }

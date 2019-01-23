@@ -75,7 +75,7 @@ sub edit_genome {
 
     while ( my ( $short_name, $long_name, $seq ) = get_chr($genome_fh) ) {
         my $variants =
-          get_variants_by_chr( $vcf_fh, $short_name, $arg_ref->{samples},
+          get_variants_by_chr( $vcf_fh, $short_name, $arg_ref->{sample},
             $arg_ref->{filter} );
         foreach my $variant ( @{$variants} ) {
             my ( $ref, $alt, $pos ) = @{$variant};
